@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace TobMoeller\LaravelMailAllowlist\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class LaravelMailAllowlistCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'laravel-mail-allowlist';
 
     public $description = 'My command';
 
