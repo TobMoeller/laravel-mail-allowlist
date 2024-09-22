@@ -18,7 +18,7 @@ it('filters a mail', function () {
     ];
     $denied = [new Address('denied@foobar.de')]; // no matching domain or email
 
-    $mail = new Email();
+    $mail = new Email;
     $mail->to(...array_merge(
         $allowed,
         $denied,
@@ -48,7 +48,7 @@ it('filters a mail', function () {
 it('leaves empty recipients for unset filters', function () {
     $address = new Address('allowed@foo.de');
 
-    $mail = new Email();
+    $mail = new Email;
     $mail->to($address);
     $mail->cc($address);
     $mail->bcc($address);
