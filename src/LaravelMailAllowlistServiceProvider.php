@@ -8,7 +8,7 @@ use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use TobMoeller\LaravelMailAllowlist\Actions\IsAllowedRecipient;
 use TobMoeller\LaravelMailAllowlist\Facades\LaravelMailAllowlist;
-use TobMoeller\LaravelMailAllowlist\Listeners\FilterMailRecipientsListener;
+use TobMoeller\LaravelMailAllowlist\Listeners\MessageSendingListener;
 
 class LaravelMailAllowlistServiceProvider extends PackageServiceProvider
 {
@@ -30,7 +30,7 @@ class LaravelMailAllowlistServiceProvider extends PackageServiceProvider
         });
 
         if (LaravelMailAllowlist::enabled()) {
-            Event::listen(MessageSending::class, FilterMailRecipientsListener::class);
+            Event::listen(MessageSending::class, MessageSendingListener::class);
         }
     }
 }

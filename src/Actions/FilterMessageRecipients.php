@@ -1,16 +1,14 @@
 <?php
 
-namespace TobMoeller\LaravelMailAllowlist\Listeners;
+namespace TobMoeller\LaravelMailAllowlist\Actions;
 
-use Illuminate\Mail\Events\MessageSending;
+use Symfony\Component\Mime\Email;
 use TobMoeller\LaravelMailAllowlist\RecipientFilter;
 
-class FilterMailRecipientsListener
+class FilterMessageRecipients
 {
-    public function handle(MessageSending $messageSendingEvent): bool
+    public function filter(Email $message): void
     {
-        $message = $messageSendingEvent->message;
-
         $toFilter = app(RecipientFilter::class)->filter($message->getTo());
         $ccFilter = app(RecipientFilter::class)->filter($message->getCc());
         $bccFilter = app(RecipientFilter::class)->filter($message->getBcc());
@@ -31,11 +29,5 @@ class FilterMailRecipientsListener
         if ($bccFilter->hasAllowedRecipients()) {
             $message->addBcc(...$bccFilter->allowedRecipients);
         }
-
-        if (empty($message->getTo())) {
-            return false;
-        }
-
-        return true;
     }
 }
