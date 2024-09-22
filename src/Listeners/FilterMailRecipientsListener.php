@@ -20,15 +20,15 @@ class FilterMailRecipientsListener
         $headers->remove('cc');
         $headers->remove('bcc');
 
-        if (! empty($toFilter->allowedRecipients)) {
+        if ($toFilter->hasAllowedRecipients()) {
             $message->addTo(...$toFilter->allowedRecipients);
         }
 
-        if (! empty($ccFilter->allowedRecipients)) {
+        if ($ccFilter->hasAllowedRecipients()) {
             $message->addCc(...$ccFilter->allowedRecipients);
         }
 
-        if (! empty($bccFilter->allowedRecipients)) {
+        if ($bccFilter->hasAllowedRecipients()) {
             $message->addBcc(...$bccFilter->allowedRecipients);
         }
 

@@ -18,15 +18,7 @@ class LaravelMailAllowlist
     {
         $allowedDomains = Config::get('mail-allowlist.allowed.domains');
 
-        if (is_string($allowedDomains)) {
-            return explode(';', $allowedDomains);
-        }
-
-        if (is_array($allowedDomains)) {
-            return $allowedDomains;
-        }
-
-        return [];
+        return $this->extractArrayFromConfig($allowedDomains);
     }
 
     /**
@@ -36,12 +28,23 @@ class LaravelMailAllowlist
     {
         $allowedEmails = Config::get('mail-allowlist.allowed.emails');
 
-        if (is_string($allowedEmails)) {
-            return explode(';', $allowedEmails);
+        return $this->extractArrayFromConfig($allowedEmails);
+    }
+
+    /**
+     * Extracts the array from a config value that can be
+     * either a semicolon separated string or an array
+     *
+     * @return array<int, string>
+     */
+    protected function extractArrayFromConfig(mixed $configValue): array
+    {
+        if (is_string($configValue)) {
+            return explode(';', $configValue);
         }
 
-        if (is_array($allowedEmails)) {
-            return $allowedEmails;
+        if (is_array($configValue)) {
+            return $configValue;
         }
 
         return [];

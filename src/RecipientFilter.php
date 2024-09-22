@@ -30,4 +30,14 @@ class RecipientFilter
 
         return $this;
     }
+
+    public function hasDeniedRecipients(): bool
+    {
+        return ! empty($this->deniedRecipients);
+    }
+
+    public function hasAllowedRecipients(): bool
+    {
+        return ! empty($this->allowedRecipients);
+    }
 }
