@@ -18,7 +18,7 @@ composer require tobmoeller/laravel-mail-allowlist
 You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --tag="laravel-mail-allowlist-config"
+php artisan vendor:publish --tag="mail-allowlist-config"
 ```
 
 Your laravel application will merge your local config file with the package config file. This enables you just to keep the edited config values.
