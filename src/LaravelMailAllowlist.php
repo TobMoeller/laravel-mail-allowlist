@@ -43,6 +43,36 @@ class LaravelMailAllowlist
     }
 
     /**
+     * @return array<int, string>
+     */
+    public function globalToEmailList(): array
+    {
+        $toEmails = Config::get('mail-allowlist.global.to');
+
+        return $this->extractArrayFromConfig($toEmails);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function globalCcEmailList(): array
+    {
+        $ccEmails = Config::get('mail-allowlist.global.cc');
+
+        return $this->extractArrayFromConfig($ccEmails);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function globalBccEmailList(): array
+    {
+        $bccEmails = Config::get('mail-allowlist.global.bcc');
+
+        return $this->extractArrayFromConfig($bccEmails);
+    }
+
+    /**
      * Extracts the array from a config value that can be
      * either a semicolon separated string or an array
      *
