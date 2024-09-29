@@ -5,9 +5,28 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/tobmoeller/laravel-mail-allowlist/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/tobmoeller/laravel-mail-allowlist/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/tobmoeller/laravel-mail-allowlist.svg?style=flat-square)](https://packagist.org/packages/tobmoeller/laravel-mail-allowlist)
 
-This package enables your Laravel application to filter recipients of outgoing emails by domain or specific email addresses through a configurable allowlist. Ideal for staging environments, it ensures that only approved recipients receive emails. Recipients not matching the allowlist are removed from the email, and if no valid "to" recipients remain, the email is stopped altogether, preventing unintended email delivery.
+This package provides a customizable middleware pipeline for email messages, allowing you to filter, modify, and inspect emails before they are sent.
 
-Additionally, the package now supports a customizable middleware pipeline, allowing you to control the existing functionality and implement additional logic for outgoing emails. You can add your own middleware to modify, inspect, or control email messages.
+**Key Features:**
+
+- **Recipient Allowlist Filtering:**
+  - Filter outgoing email recipients based on a configurable allowlist of domains and specific email addresses.
+  - Ideal for staging and testing environments to prevent unintended emails from reaching unintended recipients.
+  - Automatically removes recipients not matching the allowlist from the "To", "Cc", and "Bcc" fields.
+  - If no valid recipients remain after filtering, the email is canceled to prevent unintended delivery.
+
+- **Add Global Recipients:**
+  - Set default or global "To", "Cc", and "Bcc" recipients via configuration.
+  - Ensure certain recipients always receive emails, such as administrators, audit logs, or monitoring addresses.
+
+- **Customizable Middleware Pipeline:**
+  - Utilize a middleware pipeline similar to Laravel's HTTP middleware, but for outgoing emails.
+  - Add, remove, or reorder middleware to control the processing of emails.
+
+- **Custom Middleware Support:**
+  - Create your own middleware to implement custom logic for outgoing emails.
+  - Modify email content, set headers, add attachments, or perform any email transformation needed.
+  - Middleware can inspect emails, log information, or integrate with other services.
 
 > **Important Note:**
 >
@@ -43,6 +62,11 @@ MAIL_ALLOWLIST_ALLOWED_DOMAINS="foo.com;bar.com"
 
 # Define a semicolon separated list of allowed emails
 MAIL_ALLOWLIST_ALLOWED_EMAILS="mail@foo.com;mail@bar.com"
+
+# Define a semicolon separated list of globally added emails
+MAIL_ALLOWLIST_GLOBAL_TO="mail@foo.com;mail@bar.com"
+MAIL_ALLOWLIST_GLOBAL_CC="mail@foo.com;mail@bar.com"
+MAIL_ALLOWLIST_GLOBAL_BCC="mail@foo.com;mail@bar.com"
 ```
 
 ### Customizing the Middleware Pipeline
@@ -54,6 +78,9 @@ The package processes outgoing emails through a middleware pipeline, allowing yo
     ToFilter::class;
     CcFilter::class;
     BccFilter::class;
+    AddGlobalTo::class,
+    AddGlobalCc::class,
+    AddGlobalBcc::class,
     EnsureRecipients::class;
 ],
 ```

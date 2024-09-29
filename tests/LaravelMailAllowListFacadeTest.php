@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use TobMoeller\LaravelMailAllowlist\Facades\LaravelMailAllowlist;
 use TobMoeller\LaravelMailAllowlist\Listeners\MessageSendingListener;
+use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\AddGlobalBcc;
+use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\AddGlobalCc;
+use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\AddGlobalTo;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\BccFilter;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\CcFilter;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\EnsureRecipients;
@@ -26,6 +29,9 @@ it('returns default mail middleware', function () {
             ToFilter::class,
             CcFilter::class,
             BccFilter::class,
+            AddGlobalTo::class,
+            AddGlobalCc::class,
+            AddGlobalBcc::class,
             EnsureRecipients::class,
         ]);
 });
@@ -81,6 +87,36 @@ it('returns the allowed email list', function (mixed $value, mixed $expected) {
     Config::set('mail-allowlist.allowed.emails', $value);
 
     expect(LaravelMailAllowlist::allowedEmailList())
+        ->toBe($expected);
+})->with([
+    [
+        'value' => ['bar@foo.de', 'foo@bar.de'],
+        'expected' => ['bar@foo.de', 'foo@bar.de'],
+    ],
+    [
+        'value' => 'bar@foo.de;foo@bar.de',
+        'expected' => ['bar@foo.de', 'foo@bar.de'],
+    ],
+    [
+        'value' => 'foo@bar.de',
+        'expected' => ['foo@bar.de'],
+    ],
+    [
+        'value' => null,
+        'expected' => [],
+    ],
+]);
+
+it('returns the global to/cc/bcc email lists', function (mixed $value, mixed $expected) {
+    Config::set('mail-allowlist.global.to', $value);
+    Config::set('mail-allowlist.global.cc', $value);
+    Config::set('mail-allowlist.global.bcc', $value);
+
+    expect(LaravelMailAllowlist::globalToEmailList())
+        ->toBe($expected)
+        ->and(LaravelMailAllowlist::globalCcEmailList())
+        ->toBe($expected)
+        ->and(LaravelMailAllowlist::globalBccEmailList())
         ->toBe($expected);
 })->with([
     [
