@@ -1,59 +1,55 @@
 <?php
 
 use Illuminate\Mail\Events\MessageSending;
+use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Config;
-use Mockery\MockInterface;
-use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
-use TobMoeller\LaravelMailAllowlist\Actions\FilterMessageRecipients;
 use TobMoeller\LaravelMailAllowlist\Listeners\MessageSendingListener;
+use TobMoeller\LaravelMailAllowlist\MessageContext;
 
-it('return false if disabled', function () {
+it('return true without running middleware if disabled', function () {
     Config::set('mail-allowlist.enabled', false);
 
     $message = new Email;
     $event = new MessageSending($message);
     $listener = new MessageSendingListener;
 
+    $mock = Mockery::mock(Pipeline::class);
+    $mock->shouldNotReceive('send');
+    $this->instance('pipeline', $mock);
+
     expect($listener->handle($event))
         ->toBeTrue();
 });
 
-it('filters recipients and returns false if "to" is empty', function () {
+it('runs the middleware pipelines and returns if the message should be sent', function (bool $shouldSendMessage) {
     Config::set('mail-allowlist.enabled', true);
+    Config::set('mail-allowlist.middleware', $middleware = ['::middleware::']);
 
     $message = new Email;
     $event = new MessageSending($message);
     $listener = new MessageSendingListener;
 
-    $this->instance(
-        FilterMessageRecipients::class,
-        Mockery::mock(FilterMessageRecipients::class, function (MockInterface $mock) use ($message) {
-            $mock->shouldReceive('filter')
-                ->with($message)
-                ->once();
-        })
-    );
+    $mock = Mockery::mock(Pipeline::class);
+    $mock->shouldReceive('send')
+         ->with(Mockery::on(function (MessageContext $messageContext) use ($message, $shouldSendMessage) {
+             if (! $shouldSendMessage) {
+                 $messageContext->cancelSendingMessage('::reason::');
+             }
+             return $message === $messageContext->getMessage();
+         }))
+         ->once()
+         ->andReturnSelf()
+         ->shouldReceive('through')
+         ->with($middleware)
+         ->once()
+         ->andReturnSelf()
+         ->shouldReceive('thenReturn')
+         ->once()
+         ->andReturnSelf();
 
-    expect($listener->handle($event))->ToBeFalse();
-});
+    $this->instance('pipeline', $mock);
 
-it('filters recipients and returns true if "to" is filled', function () {
-    Config::set('mail-allowlist.enabled', true);
+    expect($listener->handle($event))->toBe($shouldSendMessage);
+})->with([true, false]);
 
-    $message = new Email;
-    $message->to(new Address('foo@bar.de'));
-    $event = new MessageSending($message);
-    $listener = new MessageSendingListener;
-
-    $this->instance(
-        FilterMessageRecipients::class,
-        Mockery::mock(FilterMessageRecipients::class, function (MockInterface $mock) use ($message) {
-            $mock->shouldReceive('filter')
-                ->with($message)
-                ->once();
-        })
-    );
-
-    expect($listener->handle($event))->toBeTrue();
-});

@@ -10,6 +10,31 @@ it('checks if the feature is enabled', function (bool $enabled) {
         ->toBe($enabled);
 })->with([true, false]);
 
+it('returns mail middleware', function (mixed $value, mixed $expected) {
+    Config::set('mail-allowlist.middleware', $value);
+
+    expect(LaravelMailAllowlist::mailMiddleware())
+        ->toBe($expected);
+})->with([
+    [
+        'value' => ['::class-string::', $class = new class {}],
+        'expected' => ['::class-string::', $class],
+    ],
+    [
+        'value' => [],
+        'expected' => [],
+    ],
+    [
+        'value' => null,
+        'expected' => [],
+    ],
+    [
+        'value' => false,
+        'expected' => [],
+    ],
+]);
+
+
 it('returns the allowed domain list', function (mixed $value, mixed $expected) {
     Config::set('mail-allowlist.allowed.domains', $value);
 

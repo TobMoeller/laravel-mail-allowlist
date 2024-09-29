@@ -3,12 +3,23 @@
 namespace TobMoeller\LaravelMailAllowlist;
 
 use Illuminate\Support\Facades\Config;
+use TobMoeller\LaravelMailAllowlist\MailMiddleware\MailMiddlewareContract;
 
 class LaravelMailAllowlist
 {
     public function enabled(): bool
     {
         return (bool) Config::get('mail-allowlist.enabled', false);
+    }
+
+    /**
+     * @return array<int, MailMiddlewareContract|class-string<MailMiddlewareContract>>
+     */
+    public function mailMiddleware(): array
+    {
+        $middleware = Config::get('mail-allowlist.middleware');
+
+        return is_array($middleware) ? $middleware : [];
     }
 
     /**

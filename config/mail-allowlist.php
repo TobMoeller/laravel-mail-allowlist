@@ -7,6 +7,17 @@ return [
     'enabled' => env('MAIL_ALLOWLIST_ENABLED', false),
 
     /**
+     * Define the mail middleware every message should be passed through.
+     * Can be either a class-string or an instance. Class-strings will
+     * be instantiated through Laravel's service container
+     *
+     * All middleware has to implement the MailMiddlewareContract
+     */
+    'middleware' => [
+        // @TODO redefine recipient filter
+    ],
+
+    /**
      * Define the domains and email addresses that are allowed
      * to receive mails from your application.
      * All other recipients will be filtered out
