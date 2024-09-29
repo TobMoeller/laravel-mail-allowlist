@@ -15,6 +15,7 @@ class EnsureRecipients implements MailMiddlewareContract
         }
 
         $messageContext->cancelSendingMessage('No recipients left.');
+
         return null;
     }
 }

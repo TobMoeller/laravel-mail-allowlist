@@ -32,24 +32,24 @@ it('runs the middleware pipelines and returns if the message should be sent', fu
 
     $mock = Mockery::mock(Pipeline::class);
     $mock->shouldReceive('send')
-         ->with(Mockery::on(function (MessageContext $messageContext) use ($message, $shouldSendMessage) {
-             if (! $shouldSendMessage) {
-                 $messageContext->cancelSendingMessage('::reason::');
-             }
-             return $message === $messageContext->getMessage();
-         }))
-         ->once()
-         ->andReturnSelf()
-         ->shouldReceive('through')
-         ->with($middleware)
-         ->once()
-         ->andReturnSelf()
-         ->shouldReceive('thenReturn')
-         ->once()
-         ->andReturnSelf();
+        ->with(Mockery::on(function (MessageContext $messageContext) use ($message, $shouldSendMessage) {
+            if (! $shouldSendMessage) {
+                $messageContext->cancelSendingMessage('::reason::');
+            }
+
+            return $message === $messageContext->getMessage();
+        }))
+        ->once()
+        ->andReturnSelf()
+        ->shouldReceive('through')
+        ->with($middleware)
+        ->once()
+        ->andReturnSelf()
+        ->shouldReceive('thenReturn')
+        ->once()
+        ->andReturnSelf();
 
     $this->instance('pipeline', $mock);
 
     expect($listener->handle($event))->toBe($shouldSendMessage);
 })->with([true, false]);
-

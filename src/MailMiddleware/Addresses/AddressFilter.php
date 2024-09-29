@@ -57,4 +57,3 @@ class AddressFilter implements MailMiddlewareContract
         return $next($messageContext);
     }
 }
-

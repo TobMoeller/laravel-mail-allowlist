@@ -3,7 +3,6 @@
 namespace TobMoeller\LaravelMailAllowlist\Actions\Addresses;
 
 use Symfony\Component\Mime\Address;
-use TobMoeller\LaravelMailAllowlist\Actions\Addresses\CheckAddressContract;
 
 class IsAllowedRecipient implements CheckAddressContract
 {

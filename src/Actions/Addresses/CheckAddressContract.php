@@ -8,4 +8,3 @@ interface CheckAddressContract
 {
     public function check(Address $address): bool;
 }
-

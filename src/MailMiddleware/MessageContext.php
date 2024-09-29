@@ -7,7 +7,9 @@ use Symfony\Component\Mime\Email;
 class MessageContext
 {
     protected Email $message;
+
     protected bool $shouldSendMessage = true;
+
     /** @var array<int, string> */
     protected array $log = [];
 
@@ -24,7 +26,7 @@ class MessageContext
     public function cancelSendingMessage(string $reason): void
     {
         $this->shouldSendMessage = false;
-        $this->addLog('Message canceled: ' . $reason);
+        $this->addLog('Message canceled: '.$reason);
     }
 
     public function shouldSendMessage(): bool

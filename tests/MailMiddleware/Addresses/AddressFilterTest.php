@@ -97,4 +97,3 @@ it('leaves empty address headers with empty allowed lists', function (Header $he
     expect($mail->getHeaders()->getHeaderBody($header->value))
         ->toBeEmpty();
 })->with(Header::addressHeaders());
-

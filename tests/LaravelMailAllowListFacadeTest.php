@@ -47,7 +47,6 @@ it('returns mail middleware', function (mixed $value, mixed $expected) {
     ],
 ]);
 
-
 it('returns the allowed domain list', function (mixed $value, mixed $expected) {
     Config::set('mail-allowlist.allowed.domains', $value);
 
