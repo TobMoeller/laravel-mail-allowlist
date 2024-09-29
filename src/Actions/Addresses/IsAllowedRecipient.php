@@ -1,10 +1,10 @@
 <?php
 
-namespace TobMoeller\LaravelMailAllowlist\Actions;
+namespace TobMoeller\LaravelMailAllowlist\Actions\Addresses;
 
 use Symfony\Component\Mime\Address;
 
-class IsAllowedRecipient
+class IsAllowedRecipient implements CheckAddressContract
 {
     /**
      * @param  array<int, string>  $allowedDomains

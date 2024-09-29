@@ -3,8 +3,9 @@
 namespace TobMoeller\LaravelMailAllowlist\Listeners;
 
 use Illuminate\Mail\Events\MessageSending;
-use TobMoeller\LaravelMailAllowlist\Actions\FilterMessageRecipients;
+use Illuminate\Support\Facades\Pipeline;
 use TobMoeller\LaravelMailAllowlist\Facades\LaravelMailAllowlist;
+use TobMoeller\LaravelMailAllowlist\MailMiddleware\MessageContext;
 
 class MessageSendingListener
 {
@@ -14,14 +15,12 @@ class MessageSendingListener
             return true;
         }
 
-        $message = $messageSendingEvent->message;
+        $messageContext = app(MessageContext::class, ['message' => $messageSendingEvent->message]);
 
-        app(FilterMessageRecipients::class)->filter($message);
+        Pipeline::send($messageContext)
+            ->through(LaravelMailAllowlist::mailMiddleware())
+            ->thenReturn();
 
-        if (empty($message->getTo())) {
-            return false;
-        }
-
-        return true;
+        return $messageContext->shouldSendMessage();
     }
 }
