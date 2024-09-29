@@ -1,17 +1,23 @@
 <?php
 
+use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Event;
 use TobMoeller\LaravelMailAllowlist\Facades\LaravelMailAllowlist;
+use TobMoeller\LaravelMailAllowlist\Listeners\MessageSendingListener;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\BccFilter;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\CcFilter;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\EnsureRecipients;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\ToFilter;
 
 it('checks if the feature is enabled', function (bool $enabled) {
+    Event::fake();
     Config::set('mail-allowlist.enabled', $enabled);
 
     expect(LaravelMailAllowlist::enabled())
         ->toBe($enabled);
+
+    Event::assertListening(MessageSending::class, MessageSendingListener::class);
 })->with([true, false]);
 
 it('returns default mail middleware', function () {

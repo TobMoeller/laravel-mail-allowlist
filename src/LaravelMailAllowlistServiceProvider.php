@@ -19,7 +19,7 @@ class LaravelMailAllowlistServiceProvider extends PackageServiceProvider
             ->hasConfigFile();
     }
 
-    public function packageBooted(): void
+    public function packageRegistered(): void
     {
         $this->app->singleton(IsAllowedRecipient::class, function () {
             return new IsAllowedRecipient(
@@ -27,7 +27,10 @@ class LaravelMailAllowlistServiceProvider extends PackageServiceProvider
                 LaravelMailAllowlist::allowedEmailList(),
             );
         });
+    }
 
+    public function packageBooted(): void
+    {
         if (LaravelMailAllowlist::enabled()) {
             Event::listen(MessageSending::class, MessageSendingListener::class);
         }
