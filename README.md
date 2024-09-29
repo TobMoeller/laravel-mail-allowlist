@@ -1,4 +1,4 @@
-# Prevent stray mails from your laravel application
+# Prevent stray mails from your Laravel application
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/tobmoeller/laravel-mail-allowlist.svg?style=flat-square)](https://packagist.org/packages/tobmoeller/laravel-mail-allowlist)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/tobmoeller/laravel-mail-allowlist/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/tobmoeller/laravel-mail-allowlist/actions?query=workflow%3Arun-tests+branch%3Amain)
@@ -51,10 +51,10 @@ The package processes outgoing emails through a middleware pipeline, allowing yo
 
 ```php
 'middleware' => [
-    \TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\ToFilter::class;
-    \TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\CcFilter::class;
-    \TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\BccFilter::class;
-    \TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\EnsureRecipients::class;
+    ToFilter::class;
+    CcFilter::class;
+    BccFilter::class;
+    EnsureRecipients::class;
 ],
 ```
 
@@ -65,10 +65,10 @@ You can also reorder or remove middleware from the pipeline to suit your require
 
 ```php
 'middleware' => [
-    \TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\ToFilter::class;
-    \TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\EnsureRecipients::class; // stops further execution when no recipients remain
-    \TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\CcFilter::class;
-    // \TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\BccFilter::class; // disabled
+    ToFilter::class;
+    EnsureRecipients::class; // stops further execution when no recipients remain
+    CcFilter::class;
+    // BccFilter::class; // disabled
 ],
 ```
 
