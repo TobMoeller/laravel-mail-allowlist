@@ -2,6 +2,7 @@
 
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\BccFilter;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\CcFilter;
+use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\EnsureRecipients;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\ToFilter;
 
 return [
@@ -21,6 +22,7 @@ return [
         ToFilter::class,
         CcFilter::class,
         BccFilter::class,
+        EnsureRecipients::class,
     ],
 
     /**

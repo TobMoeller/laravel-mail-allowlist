@@ -2,6 +2,10 @@
 
 use Illuminate\Support\Facades\Config;
 use TobMoeller\LaravelMailAllowlist\Facades\LaravelMailAllowlist;
+use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\BccFilter;
+use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\CcFilter;
+use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\EnsureRecipients;
+use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\ToFilter;
 
 it('checks if the feature is enabled', function (bool $enabled) {
     Config::set('mail-allowlist.enabled', $enabled);
@@ -10,6 +14,15 @@ it('checks if the feature is enabled', function (bool $enabled) {
         ->toBe($enabled);
 })->with([true, false]);
 
+it('returns default mail middleware', function () {
+    expect(LaravelMailAllowlist::mailMiddleware())
+        ->toBe([
+            ToFilter::class,
+            CcFilter::class,
+            BccFilter::class,
+            EnsureRecipients::class,
+        ]);
+});
 it('returns mail middleware', function (mixed $value, mixed $expected) {
     Config::set('mail-allowlist.middleware', $value);
 
