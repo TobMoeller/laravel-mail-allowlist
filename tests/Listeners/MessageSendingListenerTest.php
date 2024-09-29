@@ -5,7 +5,7 @@ use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\Mime\Email;
 use TobMoeller\LaravelMailAllowlist\Listeners\MessageSendingListener;
-use TobMoeller\LaravelMailAllowlist\MessageContext;
+use TobMoeller\LaravelMailAllowlist\MailMiddleware\MessageContext;
 
 it('return true without running middleware if disabled', function () {
     Config::set('mail-allowlist.enabled', false);

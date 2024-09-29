@@ -1,5 +1,9 @@
 <?php
 
+use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\BccFilter;
+use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\CcFilter;
+use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\ToFilter;
+
 return [
     /**
      * Enables the mail allowlist
@@ -14,7 +18,9 @@ return [
      * All middleware has to implement the MailMiddlewareContract
      */
     'middleware' => [
-        // @TODO redefine recipient filter
+        ToFilter::class,
+        CcFilter::class,
+        BccFilter::class,
     ],
 
     /**

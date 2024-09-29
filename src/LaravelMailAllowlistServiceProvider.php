@@ -6,7 +6,7 @@ use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\Event;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use TobMoeller\LaravelMailAllowlist\Actions\IsAllowedRecipient;
+use TobMoeller\LaravelMailAllowlist\Actions\Addresses\IsAllowedRecipient;
 use TobMoeller\LaravelMailAllowlist\Facades\LaravelMailAllowlist;
 use TobMoeller\LaravelMailAllowlist\Listeners\MessageSendingListener;
 
@@ -21,7 +21,6 @@ class LaravelMailAllowlistServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        $this->app->bind(RecipientFilter::class);
         $this->app->singleton(IsAllowedRecipient::class, function () {
             return new IsAllowedRecipient(
                 LaravelMailAllowlist::allowedDomainList(),

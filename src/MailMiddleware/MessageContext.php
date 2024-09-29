@@ -1,6 +1,6 @@
 <?php
 
-namespace TobMoeller\LaravelMailAllowlist;
+namespace TobMoeller\LaravelMailAllowlist\MailMiddleware;
 
 use Symfony\Component\Mime\Email;
 

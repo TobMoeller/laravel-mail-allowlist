@@ -3,7 +3,6 @@
 namespace TobMoeller\LaravelMailAllowlist\MailMiddleware;
 
 use Closure;
-use TobMoeller\LaravelMailAllowlist\MessageContext;
 
 interface MailMiddlewareContract
 {

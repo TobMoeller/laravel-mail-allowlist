@@ -5,7 +5,7 @@ namespace TobMoeller\LaravelMailAllowlist\Listeners;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\Pipeline;
 use TobMoeller\LaravelMailAllowlist\Facades\LaravelMailAllowlist;
-use TobMoeller\LaravelMailAllowlist\MessageContext;
+use TobMoeller\LaravelMailAllowlist\MailMiddleware\MessageContext;
 
 class MessageSendingListener
 {
