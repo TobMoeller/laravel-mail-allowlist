@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-mail-allowlist` will be documented in this file.
 
+## 0.3 - 2024-10-03
+
+### What's Changed
+
+* Log filtered mails by @TobMoeller in https://github.com/TobMoeller/laravel-mail-allowlist/pull/3
+
+**Full Changelog**: https://github.com/TobMoeller/laravel-mail-allowlist/compare/0.2...0.3
+
 ## 0.2 - 2024-09-29
 
 ### What's Changed
