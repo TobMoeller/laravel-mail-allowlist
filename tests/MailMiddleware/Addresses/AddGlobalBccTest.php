@@ -22,7 +22,9 @@ it('adds global bcc addresses and continues the pipeline', function () {
         ->and($addresses[1])
         ->getAddress()->toBe('bar@foo.com')
         ->and($middlewareReturn)
-        ->toBe('::next_response::');
+        ->toBe('::next_response::')
+        ->and($context->getLog()[0])
+        ->toBe(AddGlobalBcc::class.PHP_EOL.'Added Global Bcc Recipients: foo@bar.com;bar@foo.com');
 });
 
 it('does not add an address if config is empty and continues the pipeline', function () {
@@ -36,5 +38,7 @@ it('does not add an address if config is empty and continues the pipeline', func
     expect($addresses)
         ->toBeEmpty()
         ->and($middlewareReturn)
-        ->toBe('::next_response::');
+        ->toBe('::next_response::')
+        ->and($context->getLog())
+        ->toBeEmpty();
 });
