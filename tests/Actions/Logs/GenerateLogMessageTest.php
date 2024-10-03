@@ -23,27 +23,38 @@ it('is bound to interface', function () {
         ->toBeInstanceOf(GenerateLogMessage::class);
 });
 
-it('generates a log message', function () {
+it('generates a log message', function (bool $canceled) {
     Config::set('mail-allowlist.log.include.middleware', false);
     Config::set('mail-allowlist.log.include.headers', false);
     Config::set('mail-allowlist.log.include.body', false);
 
+    $expectation = 'LaravelMailAllowlist.MessageSending:';
+
+    if ($canceled) {
+        $this->context->cancelSendingMessage('::reason::');
+        $expectation .= PHP_EOL.'Message was canceled by Middleware!';
+    }
+
     expect($this->logger->generate($this->context))
-        ->toBe('LaravelMailAllowlist.MessageSending:');
-});
+        ->toBe($expectation);
+})->with([true, false]);
 
 it('generates a log message with middleware', function () {
     Config::set('mail-allowlist.log.include.middleware', true);
     Config::set('mail-allowlist.log.include.headers', false);
     Config::set('mail-allowlist.log.include.body', false);
 
+    $this->context->cancelSendingMessage('::reason::');
+
     $expectation = <<<'LOG_MESSAGE'
     LaravelMailAllowlist.MessageSending:
+    Message was canceled by Middleware!
     ----------
     MIDDLEWARE
     ----------
     ::middleware_log::
     ::middleware_log2::
+    Message canceled: ::reason::
     LOG_MESSAGE;
 
     expect($this->logger->generate($this->context))

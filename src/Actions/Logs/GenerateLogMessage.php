@@ -11,6 +11,10 @@ class GenerateLogMessage implements GenerateLogMessageContract
     {
         $logMessage = 'LaravelMailAllowlist.MessageSending:';
 
+        if (! $messageContext->shouldSendMessage()) {
+            $logMessage .= PHP_EOL.'Message was canceled by Middleware!';
+        }
+
         if (LaravelMailAllowlist::logMiddleware()) {
             $logMessage .= $this->generateMiddlewareMessage($messageContext);
         }
