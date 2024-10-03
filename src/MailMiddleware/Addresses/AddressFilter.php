@@ -54,6 +54,25 @@ class AddressFilter implements MailMiddlewareContract
             }
         }
 
+        $log = static::class;
+        if (! empty($allowedRecipients)) {
+            $log .= PHP_EOL.'Allowed Recipients: '.$this->emailList($allowedRecipients);
+        }
+        if (! empty($deniedRecipients)) {
+            $log .= PHP_EOL.'Denied Recipients: '.$this->emailList($deniedRecipients);
+        }
+        $messageContext->addLog($log);
+
         return $next($messageContext);
+    }
+
+    /**
+     * @param  array<int, Address>  $recipients
+     */
+    protected function emailList(array $recipients): string
+    {
+        $recipients = Arr::map($recipients, fn (Address $recipient) => $recipient->getAddress());
+
+        return Arr::join($recipients, ';');
     }
 }

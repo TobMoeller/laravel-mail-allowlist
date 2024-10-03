@@ -33,9 +33,15 @@ it('filters a mail with address list headers', function (Header $header) {
 
     (new AddressFilter($header, app(IsAllowedRecipient::class)))->handle($context, fn () => null);
 
+    $logExpectation = AddressFilter::class;
+    $logExpectation .= PHP_EOL.'Allowed Recipients: allowed@foo.de;allowed@bar.de;bar@foo.com;foo@bar.com';
+    $logExpectation .= PHP_EOL.'Denied Recipients: denied@foobar.de';
+
     expect($mail->getHeaders()->getHeaderBody($header->value))
         ->toMatchArray($allowed)
-        ->each(fn (Expectation $address) => $address->getAddress() !== 'denied@foobar.de');
+        ->each(fn (Expectation $address) => $address->getAddress() !== 'denied@foobar.de')
+        ->and($context->getLog()[0])
+        ->toBe($logExpectation);
 })->with(Header::addressListHeaders());
 
 it('filters a mail with address headers', function (Header $header) {
@@ -62,15 +68,25 @@ it('filters a mail with address headers', function (Header $header) {
     (new AddressFilter($header, app(IsAllowedRecipient::class)))->handle($allowedEmailContext, fn () => null);
     (new AddressFilter($header, app(IsAllowedRecipient::class)))->handle($deniedContext, fn () => null);
 
+    $allowedDomainLog = AddressFilter::class.PHP_EOL.'Allowed Recipients: allowed@foo.de';
+    $allowedEmailLog = AddressFilter::class.PHP_EOL.'Allowed Recipients: bar@foo.com';
+    $deniedLog = AddressFilter::class.PHP_EOL.'Denied Recipients: denied@foobar.de';
+
     expect($allowedDomainMail->getHeaders()->getHeaderBody($header->value))
         ->toBe($allowedDomainAddress)
         ->and($allowedEmailMail->getHeaders()->getHeaderBody($header->value))
         ->toBe($allowedEmailAddress)
         ->and($deniedMail->getHeaders()->getHeaderBody($header->value))
-        ->toBeNull();
+        ->toBeNull()
+        ->and($allowedDomainContext->getLog()[0])
+        ->toBe($allowedDomainLog)
+        ->and($allowedEmailContext->getLog()[0])
+        ->toBe($allowedEmailLog)
+        ->and($deniedContext->getLog()[0])
+        ->toBe($deniedLog);
 })->with(Header::addressHeaders());
 
-it('leaves empty address list headers with empty allowed lists', function (Header $header) {
+it('removes address list headers with no allowed lists', function (Header $header) {
     Config::set('mail-allowlist.allowed.domains', []);
     Config::set('mail-allowlist.allowed.emails', []);
 
@@ -84,7 +100,7 @@ it('leaves empty address list headers with empty allowed lists', function (Heade
         ->toBeEmpty();
 })->with(Header::addressListHeaders());
 
-it('leaves empty address headers with empty allowed lists', function (Header $header) {
+it('removes address headers with no allowed lists', function (Header $header) {
     Config::set('mail-allowlist.allowed.domains', []);
     Config::set('mail-allowlist.allowed.emails', []);
 
