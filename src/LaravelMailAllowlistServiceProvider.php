@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\Event;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use TobMoeller\LaravelMailAllowlist\Actions\Addresses\IsAllowedRecipient;
+use TobMoeller\LaravelMailAllowlist\Actions\Logs\GenerateLogMessage;
+use TobMoeller\LaravelMailAllowlist\Actions\Logs\GenerateLogMessageContract;
+use TobMoeller\LaravelMailAllowlist\Actions\Logs\LogMessage;
+use TobMoeller\LaravelMailAllowlist\Actions\Logs\LogMessageContract;
 use TobMoeller\LaravelMailAllowlist\Facades\LaravelMailAllowlist;
 use TobMoeller\LaravelMailAllowlist\Listeners\MessageSendingListener;
 
@@ -21,6 +25,8 @@ class LaravelMailAllowlistServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
+        $this->app->bind(LogMessageContract::class, LogMessage::class);
+        $this->app->bind(GenerateLogMessageContract::class, GenerateLogMessage::class);
         $this->app->singleton(IsAllowedRecipient::class, function () {
             return new IsAllowedRecipient(
                 LaravelMailAllowlist::allowedDomainList(),

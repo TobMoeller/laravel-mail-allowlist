@@ -3,6 +3,7 @@
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
+use Psr\Log\LogLevel;
 use TobMoeller\LaravelMailAllowlist\Facades\LaravelMailAllowlist;
 use TobMoeller\LaravelMailAllowlist\Listeners\MessageSendingListener;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\AddGlobalBcc;
@@ -136,3 +137,82 @@ it('returns the global to/cc/bcc email lists', function (mixed $value, mixed $ex
         'expected' => [],
     ],
 ]);
+
+it('returns if logging is enabled', function (bool $enabled) {
+    Config::set('mail-allowlist.log.enabled', $enabled);
+
+    expect(LaravelMailAllowlist::logEnabled())
+        ->toBe($enabled);
+})->with([true, false]);
+
+it('returns the log channel', function (mixed $value, mixed $default, string $expected) {
+    Config::set('logging.default', $default);
+    Config::set('mail-allowlist.log.channel', $value);
+
+    expect(LaravelMailAllowlist::logChannel())
+        ->toBe($expected);
+})->with([
+    [
+        'value' => '::channel::',
+        'default' => null,
+        'expected' => '::channel::',
+    ],
+    [
+        'value' => null,
+        'default' => '::default::',
+        'expected' => '::default::',
+    ],
+    [
+        'value' => null,
+        'default' => null,
+        'expected' => 'stack',
+    ],
+    [
+        'value' => false,
+        'default' => '::default::',
+        'expected' => '::default::',
+    ],
+    [
+        'value' => false,
+        'default' => false,
+        'expected' => 'stack',
+    ],
+]);
+
+it('returns the log level', function (string $level) {
+    Config::set('mail-allowlist.log.level', $level);
+
+    expect(LaravelMailAllowlist::logLevel())
+        ->toBe($level);
+})->with(fn () => array_values((new ReflectionClass(LogLevel::class))->getConstants()));
+
+it('throws on invalid log levels', function (mixed $level) {
+    Config::set('mail-allowlist.log.level', $level);
+
+    expect(fn () => LaravelMailAllowlist::logLevel())
+        ->toThrow(InvalidArgumentException::class, 'Invalid log level provided');
+})->with([
+    '::invalid_level::',
+    null,
+]);
+
+it('returns if middleware should be logged', function (bool $enabled) {
+    Config::set('mail-allowlist.log.include.middleware', $enabled);
+
+    expect(LaravelMailAllowlist::logMiddleware())
+        ->toBe($enabled);
+})->with([true, false]);
+
+it('returns if headers should be logged', function (bool $enabled) {
+    Config::set('mail-allowlist.log.include.headers', $enabled);
+
+    expect(LaravelMailAllowlist::logHeaders())
+        ->toBe($enabled);
+})->with([true, false]);
+
+it('returns if body should be logged', function (bool $enabled) {
+    Config::set('mail-allowlist.log.include.body', $enabled);
+
+    expect(LaravelMailAllowlist::logBody())
+        ->toBe($enabled);
+})->with([true, false]);
