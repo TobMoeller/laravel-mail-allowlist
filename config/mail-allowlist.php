@@ -88,7 +88,7 @@ return [
         /*
          * Enables the log.
          */
-        'enabled' => env('MAIL_ALLOWLIST_LOG_ENABLED', true),
+        'enabled' => env('MAIL_ALLOWLIST_LOG_ENABLED', false),
 
         /*
          * Define a custom logging channel for your filtered message
