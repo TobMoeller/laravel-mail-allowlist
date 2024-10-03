@@ -28,6 +28,12 @@ This package provides a customizable middleware pipeline for email messages, all
   - Modify email content, set headers, add attachments, or perform any email transformation needed.
   - Middleware can inspect emails, log information, or integrate with other services.
 
+- **Advanced Logging Options:**
+  - Configure logging to use custom channels.
+  - Set custom log levels (e.g., 'debug', 'info', 'error', etc.).
+  - Enable mail middleware to add individual log messages during email processing.
+  - Choose whether to include middleware logs, email message headers or message bodies in the logs.
+
 > **Important Note:**
 >
 > This package utilizes Laravel's `MessageSending` event to inspect and modify outgoing emails. If your application has custom listeners or modifications affecting this event, please thoroughly test the package to ensure it integrates seamlessly and maintains the correct filtering functionality.
@@ -67,6 +73,11 @@ MAIL_ALLOWLIST_ALLOWED_EMAILS="mail@foo.com;mail@bar.com"
 MAIL_ALLOWLIST_GLOBAL_TO="mail@foo.com;mail@bar.com"
 MAIL_ALLOWLIST_GLOBAL_CC="mail@foo.com;mail@bar.com"
 MAIL_ALLOWLIST_GLOBAL_BCC="mail@foo.com;mail@bar.com"
+
+# Configure logging
+MAIL_ALLOWLIST_LOG_ENABLED=true
+MAIL_ALLOWLIST_LOG_CHANNEL=stack # optional, defaults to Laravel's logging.default
+MAIL_ALLOWLIST_LOG_LEVEL=error # optional, defaults to info
 ```
 
 ### Customizing the Middleware Pipeline
@@ -133,6 +144,76 @@ Then add it to your middleware pipeline. This can be done as a class-string whic
     new \App\Mail\Middleware\CancelMessageMiddleware(), // As an instance
     // Downstream middleware
 ],
+```
+
+### Customizing the Logging Behavior
+
+You can control most of the logging behavior from environment variables or the configuration file. For more advanced use cases, you might want to have full control over how log messages are generated and where they are sent. You can achieve this by binding your own implementations of the log content generation action and/or the logging action itself.
+
+#### Customizing the log message content
+
+Create a new class that implements `GenerateLogMessageContract` to define how log messages are generated:
+
+```php
+use TobMoeller\LaravelMailAllowlist\Actions\Logs\GenerateLogMessageContract;
+use TobMoeller\LaravelMailAllowlist\Facades\LaravelMailAllowlist;
+use TobMoeller\LaravelMailAllowlist\MailMiddleware\MessageContext;
+
+class CustomLogMessage implements GenerateLogMessageContract
+{
+    public function generate(MessageContext $messageContext): string
+    {
+        // Generate your own log message
+    }
+}
+```
+
+#### Customizing the log message content
+
+Create a new class that implements `LogMessageContract` to define how log messages are handled:
+
+```php
+use TobMoeller\LaravelMailAllowlist\Actions\Logs\LogMessageContract;
+use TobMoeller\LaravelMailAllowlist\Facades\LaravelMailAllowlist;
+use TobMoeller\LaravelMailAllowlist\MailMiddleware\MessageContext;
+
+class CustomMessageLogging implements LogMessageContract
+{
+    /**
+     * Optional: 
+     * Inject the message generator into your class to use the default 
+     * message generation (is resolved by the service container)
+     */
+    public function __construct(
+        public GenerateLogMessageContract $generateLogMessage
+    ) {}
+
+    public function log(MessageContext $messageContext): void
+    {
+        // Handle logging yourself
+    }
+}
+```
+
+#### Binding Custom Implementations
+
+To instruct Laravel to use your custom classes, you need to bind them in your application's service container. This is typically done in a service provider like `App\Providers\AppServiceProvider`.
+
+```php
+use TobMoeller\LaravelMailAllowlist\Actions\Logs\GenerateLogMessageContract;
+use TobMoeller\LaravelMailAllowlist\Actions\Logs\LogMessageContract;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function register()
+    {
+        // Bind the custom log message generator
+        $this->app->bind(GenerateLogMessageContract::class, CustomLogMessage::class);
+
+        // Bind the custom log handler
+        $this->app->bind(LogMessageContract::class, CustomMessageLogging::class);
+    }
+}
 ```
 
 ## Testing

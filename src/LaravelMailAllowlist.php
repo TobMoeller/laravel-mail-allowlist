@@ -3,6 +3,10 @@
 namespace TobMoeller\LaravelMailAllowlist;
 
 use Illuminate\Support\Facades\Config;
+use InvalidArgumentException;
+use Psr\Log\LogLevel;
+use ReflectionClass;
+use Throwable;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\MailMiddlewareContract;
 
 class LaravelMailAllowlist
@@ -89,5 +93,51 @@ class LaravelMailAllowlist
         }
 
         return [];
+    }
+
+    public function logEnabled(): bool
+    {
+        return (bool) Config::get('mail-allowlist.log.enabled', false);
+    }
+
+    public function logChannel(): string
+    {
+        $channel = Config::get('mail-allowlist.log.channel');
+        $channel = is_string($channel) ? $channel : Config::get('logging.default');
+
+        return is_string($channel) ? $channel : 'stack';
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function logLevel(): string
+    {
+        $level = Config::get('mail-allowlist.log.level');
+        $allowedLevels = array_values((new ReflectionClass(LogLevel::class))->getConstants());
+
+        throw_unless(
+            is_string($level) &&
+            in_array($level = mb_strtolower($level), $allowedLevels),
+            InvalidArgumentException::class,
+            'Invalid log level provided'
+        );
+
+        return $level;
+    }
+
+    public function logMiddleware(): bool
+    {
+        return (bool) Config::get('mail-allowlist.log.include.middleware');
+    }
+
+    public function logHeaders(): bool
+    {
+        return (bool) Config::get('mail-allowlist.log.include.headers');
+    }
+
+    public function logBody(): bool
+    {
+        return (bool) Config::get('mail-allowlist.log.include.body');
     }
 }
