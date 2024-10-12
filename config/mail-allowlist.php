@@ -16,6 +16,11 @@ return [
     'enabled' => env('MAIL_ALLOWLIST_ENABLED', false),
 
     /*
+     * Enables the mail middleware.
+     */
+    'middleware_enabled' => env('MAIL_ALLOWLIST_MIDDLEWARE_ENABLED', true),
+
+    /*
      * Define the mail middleware every message should be passed through.
      * Can be either a class-string or an instance. Class-strings will
      * be instantiated through Laravel's service container.

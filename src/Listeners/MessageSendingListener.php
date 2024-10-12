@@ -23,9 +23,11 @@ class MessageSendingListener
 
         $messageContext = app(MessageContext::class, ['message' => $messageSendingEvent->message]);
 
-        Pipeline::send($messageContext)
-            ->through(LaravelMailAllowlist::mailMiddleware())
-            ->thenReturn();
+        if (LaravelMailAllowlist::mailMiddlewareEnabled()) {
+            Pipeline::send($messageContext)
+                ->through(LaravelMailAllowlist::mailMiddleware())
+                ->thenReturn();
+        }
 
         if (LaravelMailAllowlist::logEnabled()) {
             $this->messageLogger->log($messageContext);

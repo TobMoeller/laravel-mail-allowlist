@@ -16,6 +16,11 @@ class LaravelMailAllowlist
         return (bool) Config::get('mail-allowlist.enabled', false);
     }
 
+    public function mailMiddlewareEnabled(): bool
+    {
+        return (bool) Config::get('mail-allowlist.middleware_enabled', true);
+    }
+
     /**
      * @return array<int, MailMiddlewareContract|class-string<MailMiddlewareContract>>
      */
