@@ -63,6 +63,9 @@ You can configure the package through environment variables:
 # Enable the package
 MAIL_ALLOWLIST_ENABLED=true
 
+# Enable the mail middleware (allowlist, global recipients)
+MAIL_ALLOWLIST_MIDDLEWARE_ENABLED=true
+
 # Define a semicolon separated list of allowed domains
 MAIL_ALLOWLIST_ALLOWED_DOMAINS="foo.com;bar.com"
 
