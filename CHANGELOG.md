@@ -2,6 +2,17 @@
 
 All notable changes to `laravel-mail-allowlist` will be documented in this file.
 
+## 0.4 - 2024-10-13
+
+### What's Changed
+
+* add a config option to disable running the mail middleware (to enable by @TobMoeller in https://github.com/TobMoeller/laravel-mail-allowlist/pull/4
+* Pass event data to context by @TobMoeller in https://github.com/TobMoeller/laravel-mail-allowlist/pull/5
+* add collection to message context for middleware to share data by @TobMoeller in https://github.com/TobMoeller/laravel-mail-allowlist/pull/6
+* fix return value of MessageSendingListener so that later listeners still by @TobMoeller in https://github.com/TobMoeller/laravel-mail-allowlist/pull/7
+
+**Full Changelog**: https://github.com/TobMoeller/laravel-mail-allowlist/compare/0.3...0.4
+
 ## 0.3 - 2024-10-03
 
 ### What's Changed
