@@ -8,7 +8,7 @@ use TobMoeller\LaravelMailAllowlist\Actions\Logs\LogMessage;
 use TobMoeller\LaravelMailAllowlist\Listeners\MessageSendingListener;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\MessageContext;
 
-it('return true without running middleware if disabled', function () {
+it('return null without running middleware if disabled', function () {
     Config::set('mail-allowlist.enabled', false);
 
     $loggerMock = Mockery::mock(LogMessage::class);
@@ -23,7 +23,7 @@ it('return true without running middleware if disabled', function () {
     $this->instance('pipeline', $mock);
 
     expect($listener->handle($event))
-        ->toBeTrue();
+        ->toBeNull();
 });
 
 it('runs the middleware pipelines and returns if the message should be sent', function (bool $shouldSendMessage, bool $shouldLog) {
@@ -69,7 +69,7 @@ it('runs the middleware pipelines and returns if the message should be sent', fu
 
     $this->instance('pipeline', $mock);
 
-    expect($listener->handle($event))->toBe($shouldSendMessage);
+    expect($listener->handle($event))->toBe($shouldSendMessage ? null : false);
 })->with([true, false], [true, false]);
 
 it('does not run the middleware if disabled', function () {
