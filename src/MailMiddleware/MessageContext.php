@@ -2,6 +2,7 @@
 
 namespace TobMoeller\LaravelMailAllowlist\MailMiddleware;
 
+use Illuminate\Support\Collection;
 use Symfony\Component\Mime\Email;
 use TobMoeller\LaravelMailAllowlist\Traits\MailMiddleware\HandlesMessageData;
 use TobMoeller\LaravelMailAllowlist\Traits\MailMiddleware\LogsMessages;
@@ -10,6 +11,14 @@ class MessageContext
 {
     use HandlesMessageData;
     use LogsMessages;
+
+    /**
+     * Collection for middleware to share temporary data
+     * with other middleware further down the pipeline.
+     *
+     * @var Collection<string, mixed>
+     */
+    public Collection $sharedData;
 
     protected Email $message;
 
@@ -22,6 +31,7 @@ class MessageContext
     {
         $this->message = $message;
         $this->messageData = $messageData;
+        $this->sharedData = new Collection;
     }
 
     public function getMessage(): Email
