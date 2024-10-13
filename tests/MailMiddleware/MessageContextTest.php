@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Collection;
 use Symfony\Component\Mime\Email;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\MessageContext;
 
@@ -57,3 +58,14 @@ it('holds message data and returns the originating class name', function (array 
         'expectation' => null,
     ],
 ]);
+
+it('shares data for middleware', function () {
+    $message = new Email;
+    $context = new MessageContext($message);
+
+    $context->sharedData->put('foo', 'bar');
+
+    expect($context->sharedData)
+        ->toBeInstanceOf(Collection::class)
+        ->get('foo')->toBe('bar');
+});
