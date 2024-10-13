@@ -11,6 +11,10 @@ class GenerateLogMessage implements GenerateLogMessageContract
     {
         $logMessage = 'LaravelMailAllowlist.MessageSending:';
 
+        if ($className = $messageContext->getOriginatingClassName()) {
+            $logMessage .= PHP_EOL.'ClassName: '.$className;
+        }
+
         if (! $messageContext->shouldSendMessage()) {
             $logMessage .= PHP_EOL.'Message was canceled by Middleware!';
         }
@@ -21,6 +25,10 @@ class GenerateLogMessage implements GenerateLogMessageContract
 
         if (LaravelMailAllowlist::logHeaders()) {
             $logMessage .= $this->generateHeadersMessage($messageContext);
+        }
+
+        if (LaravelMailAllowlist::logMessageData()) {
+            $logMessage .= $this->generateMessageDataMessage($messageContext);
         }
 
         if (LaravelMailAllowlist::logBody()) {
@@ -55,6 +63,19 @@ class GenerateLogMessage implements GenerateLogMessageContract
         ----------
         {$messageContext->getMessage()->getHeaders()->toString()}
         LOG_HEADERS;
+    }
+
+    protected function generateMessageDataMessage(MessageContext $messageContext): string
+    {
+        $data = json_encode($messageContext->getMessageData()) ?: '';
+
+        return <<<LOG_MESSAGE_DATA
+
+        ----------
+        MESSAGE DATA
+        ----------
+        {$data}
+        LOG_MESSAGE_DATA;
     }
 
     protected function generateBodyMessage(MessageContext $messageContext): string
