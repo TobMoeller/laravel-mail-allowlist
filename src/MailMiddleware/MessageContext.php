@@ -3,19 +3,25 @@
 namespace TobMoeller\LaravelMailAllowlist\MailMiddleware;
 
 use Symfony\Component\Mime\Email;
+use TobMoeller\LaravelMailAllowlist\Traits\MailMiddleware\HandlesMessageData;
+use TobMoeller\LaravelMailAllowlist\Traits\MailMiddleware\LogsMessages;
 
 class MessageContext
 {
+    use HandlesMessageData;
+    use LogsMessages;
+
     protected Email $message;
 
     protected bool $shouldSendMessage = true;
 
-    /** @var array<int, string> */
-    protected array $log = [];
-
-    public function __construct(Email $message)
+    /**
+     * @param  array<string, mixed>  $messageData
+     */
+    public function __construct(Email $message, array $messageData = [])
     {
         $this->message = $message;
+        $this->messageData = $messageData;
     }
 
     public function getMessage(): Email
@@ -32,18 +38,5 @@ class MessageContext
     public function shouldSendMessage(): bool
     {
         return $this->shouldSendMessage;
-    }
-
-    public function addLog(string $logMessage): void
-    {
-        $this->log[] = $logMessage;
-    }
-
-    /**
-     * @return array <int, string>
-     */
-    public function getLog(): array
-    {
-        return $this->log;
     }
 }

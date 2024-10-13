@@ -10,7 +10,9 @@ it('holds message information', function () {
     expect($context->getMessage())
         ->toBe($message)
         ->and($context->shouldSendMessage())
-        ->toBeTrue();
+        ->toBeTrue()
+        ->and($context->getMessageData())
+        ->toBeEmpty();
 
     $context->addLog('::log1::');
     $context->cancelSendingMessage('::reason::');
@@ -25,3 +27,33 @@ it('holds message information', function () {
             '::log2::',
         ]);
 });
+
+it('holds message data and returns the originating class name', function (array $className, mixed $expectation) {
+    $message = new Email;
+    $messageData = array_merge([
+        'test_meta' => '::test_meta::',
+    ], $className);
+    $context = new MessageContext($message, $messageData);
+
+    expect($context->getMessageData())
+        ->toBe($messageData)
+        ->and($context->getOriginatingClassName())
+        ->toBe($expectation);
+})->with([
+    [
+        'className' => ['__laravel_notification' => '::notification_name::'],
+        'expectation' => '::notification_name::',
+    ],
+    [
+        'className' => ['__laravel_mailable' => '::mailable_name::'],
+        'expectation' => '::mailable_name::',
+    ],
+    [
+        'className' => ['__laravel_notification' => false],
+        'expectation' => null,
+    ],
+    [
+        'className' => [],
+        'expectation' => null,
+    ],
+]);

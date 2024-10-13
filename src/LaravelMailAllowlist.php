@@ -141,6 +141,11 @@ class LaravelMailAllowlist
         return (bool) Config::get('mail-allowlist.log.include.headers');
     }
 
+    public function logMessageData(): bool
+    {
+        return (bool) Config::get('mail-allowlist.log.include.message_data');
+    }
+
     public function logBody(): bool
     {
         return (bool) Config::get('mail-allowlist.log.include.body');

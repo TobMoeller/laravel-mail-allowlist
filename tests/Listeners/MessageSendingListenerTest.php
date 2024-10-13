@@ -43,17 +43,19 @@ it('runs the middleware pipelines and returns if the message should be sent', fu
         $loggerMock->shouldNotReceive('log');
     }
 
-    $event = new MessageSending($message);
+    $messageData = ['test_meta' => '::test_meta::'];
+    $event = new MessageSending($message, $messageData);
     $listener = new MessageSendingListener($loggerMock);
 
     $mock = Mockery::mock(Pipeline::class);
     $mock->shouldReceive('send')
-        ->with(Mockery::on(function (MessageContext $messageContext) use ($message, $shouldSendMessage) {
+        ->with(Mockery::on(function (MessageContext $messageContext) use ($message, $messageData, $shouldSendMessage) {
             if (! $shouldSendMessage) {
                 $messageContext->cancelSendingMessage('::reason::');
             }
 
-            return $message === $messageContext->getMessage();
+            return $message === $messageContext->getMessage() &&
+                $messageData === $messageContext->getMessageData();
         }))
         ->once()
         ->andReturnSelf()

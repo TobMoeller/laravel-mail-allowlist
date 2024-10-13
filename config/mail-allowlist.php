@@ -124,6 +124,11 @@ return [
             'headers' => true,
 
             /*
+             * Log the message data.
+             */
+            'message_data' => false,
+
+            /*
              * Log the final message body.
              */
             'body' => false,
