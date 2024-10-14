@@ -29,10 +29,10 @@ it('is bound to interface', function () {
 });
 
 it('generates a log message', function (bool $hasClassName, bool $canceled) {
-    Config::set('mail-allowlist.log.include.middleware', false);
-    Config::set('mail-allowlist.log.include.headers', false);
-    Config::set('mail-allowlist.log.include.message_data', false);
-    Config::set('mail-allowlist.log.include.body', false);
+    Config::set('mail-allowlist.sending.log.include.middleware', false);
+    Config::set('mail-allowlist.sending.log.include.headers', false);
+    Config::set('mail-allowlist.sending.log.include.message_data', false);
+    Config::set('mail-allowlist.sending.log.include.body', false);
 
     $expectation = 'LaravelMailAllowlist.MessageSending:';
     $expectation .= PHP_EOL.'ClassName: ::notification_name::';
@@ -47,10 +47,10 @@ it('generates a log message', function (bool $hasClassName, bool $canceled) {
 })->with([true, false], [true, false]);
 
 it('generates a log message with middleware', function () {
-    Config::set('mail-allowlist.log.include.middleware', true);
-    Config::set('mail-allowlist.log.include.headers', false);
-    Config::set('mail-allowlist.log.include.message_data', false);
-    Config::set('mail-allowlist.log.include.body', false);
+    Config::set('mail-allowlist.sending.log.include.middleware', true);
+    Config::set('mail-allowlist.sending.log.include.headers', false);
+    Config::set('mail-allowlist.sending.log.include.message_data', false);
+    Config::set('mail-allowlist.sending.log.include.body', false);
 
     $this->context->cancelSendingMessage('::reason::');
 
@@ -71,10 +71,10 @@ it('generates a log message with middleware', function () {
 });
 
 it('generates a log message with headers', function () {
-    Config::set('mail-allowlist.log.include.middleware', false);
-    Config::set('mail-allowlist.log.include.headers', true);
-    Config::set('mail-allowlist.log.include.message_data', false);
-    Config::set('mail-allowlist.log.include.body', false);
+    Config::set('mail-allowlist.sending.log.include.middleware', false);
+    Config::set('mail-allowlist.sending.log.include.headers', true);
+    Config::set('mail-allowlist.sending.log.include.message_data', false);
+    Config::set('mail-allowlist.sending.log.include.body', false);
 
     $expectation = <<<'LOG_MESSAGE'
     LaravelMailAllowlist.MessageSending:
@@ -90,10 +90,10 @@ it('generates a log message with headers', function () {
 });
 
 it('generates a log message with body', function () {
-    Config::set('mail-allowlist.log.include.middleware', false);
-    Config::set('mail-allowlist.log.include.headers', false);
-    Config::set('mail-allowlist.log.include.message_data', false);
-    Config::set('mail-allowlist.log.include.body', true);
+    Config::set('mail-allowlist.sending.log.include.middleware', false);
+    Config::set('mail-allowlist.sending.log.include.headers', false);
+    Config::set('mail-allowlist.sending.log.include.message_data', false);
+    Config::set('mail-allowlist.sending.log.include.body', true);
 
     $expectation = <<<'LOG_MESSAGE'
     LaravelMailAllowlist.MessageSending:
@@ -109,10 +109,10 @@ it('generates a log message with body', function () {
 });
 
 it('generates a log message with message data', function () {
-    Config::set('mail-allowlist.log.include.middleware', false);
-    Config::set('mail-allowlist.log.include.headers', false);
-    Config::set('mail-allowlist.log.include.message_data', true);
-    Config::set('mail-allowlist.log.include.body', false);
+    Config::set('mail-allowlist.sending.log.include.middleware', false);
+    Config::set('mail-allowlist.sending.log.include.headers', false);
+    Config::set('mail-allowlist.sending.log.include.message_data', true);
+    Config::set('mail-allowlist.sending.log.include.body', false);
 
     $expectation = <<<'LOG_MESSAGE'
     LaravelMailAllowlist.MessageSending:
@@ -128,10 +128,10 @@ it('generates a log message with message data', function () {
 });
 
 it('generates a log message with all options enabled', function () {
-    Config::set('mail-allowlist.log.include.middleware', true);
-    Config::set('mail-allowlist.log.include.headers', true);
-    Config::set('mail-allowlist.log.include.message_data', true);
-    Config::set('mail-allowlist.log.include.body', true);
+    Config::set('mail-allowlist.sending.log.include.middleware', true);
+    Config::set('mail-allowlist.sending.log.include.headers', true);
+    Config::set('mail-allowlist.sending.log.include.message_data', true);
+    Config::set('mail-allowlist.sending.log.include.body', true);
 
     $headers = $this->mail->getHeaders()->toString();
     $body = $this->mail->getBody()->toString();

@@ -18,7 +18,7 @@ class LaravelMailAllowlist
 
     public function mailMiddlewareEnabled(): bool
     {
-        return (bool) Config::get('mail-allowlist.middleware_enabled', true);
+        return (bool) Config::get('mail-allowlist.sending.middleware_enabled', true);
     }
 
     /**
@@ -26,7 +26,7 @@ class LaravelMailAllowlist
      */
     public function mailMiddleware(): array
     {
-        $middleware = Config::get('mail-allowlist.middleware');
+        $middleware = Config::get('mail-allowlist.sending.middleware');
 
         return is_array($middleware) ? $middleware : [];
     }
@@ -36,7 +36,7 @@ class LaravelMailAllowlist
      */
     public function allowedDomainList(): array
     {
-        $allowedDomains = Config::get('mail-allowlist.allowed.domains');
+        $allowedDomains = Config::get('mail-allowlist.sending.allowed.domains');
 
         return $this->extractArrayFromConfig($allowedDomains);
     }
@@ -46,7 +46,7 @@ class LaravelMailAllowlist
      */
     public function allowedEmailList(): array
     {
-        $allowedEmails = Config::get('mail-allowlist.allowed.emails');
+        $allowedEmails = Config::get('mail-allowlist.sending.allowed.emails');
 
         return $this->extractArrayFromConfig($allowedEmails);
     }
@@ -56,7 +56,7 @@ class LaravelMailAllowlist
      */
     public function globalToEmailList(): array
     {
-        $toEmails = Config::get('mail-allowlist.global.to');
+        $toEmails = Config::get('mail-allowlist.sending.global.to');
 
         return $this->extractArrayFromConfig($toEmails);
     }
@@ -66,7 +66,7 @@ class LaravelMailAllowlist
      */
     public function globalCcEmailList(): array
     {
-        $ccEmails = Config::get('mail-allowlist.global.cc');
+        $ccEmails = Config::get('mail-allowlist.sending.global.cc');
 
         return $this->extractArrayFromConfig($ccEmails);
     }
@@ -76,7 +76,7 @@ class LaravelMailAllowlist
      */
     public function globalBccEmailList(): array
     {
-        $bccEmails = Config::get('mail-allowlist.global.bcc');
+        $bccEmails = Config::get('mail-allowlist.sending.global.bcc');
 
         return $this->extractArrayFromConfig($bccEmails);
     }
@@ -102,12 +102,12 @@ class LaravelMailAllowlist
 
     public function logEnabled(): bool
     {
-        return (bool) Config::get('mail-allowlist.log.enabled', false);
+        return (bool) Config::get('mail-allowlist.sending.log.enabled', false);
     }
 
     public function logChannel(): string
     {
-        $channel = Config::get('mail-allowlist.log.channel');
+        $channel = Config::get('mail-allowlist.sending.log.channel');
         $channel = is_string($channel) ? $channel : Config::get('logging.default');
 
         return is_string($channel) ? $channel : 'stack';
@@ -118,7 +118,7 @@ class LaravelMailAllowlist
      */
     public function logLevel(): string
     {
-        $level = Config::get('mail-allowlist.log.level');
+        $level = Config::get('mail-allowlist.sending.log.level');
         $allowedLevels = array_values((new ReflectionClass(LogLevel::class))->getConstants());
 
         throw_unless(
@@ -133,21 +133,21 @@ class LaravelMailAllowlist
 
     public function logMiddleware(): bool
     {
-        return (bool) Config::get('mail-allowlist.log.include.middleware');
+        return (bool) Config::get('mail-allowlist.sending.log.include.middleware');
     }
 
     public function logHeaders(): bool
     {
-        return (bool) Config::get('mail-allowlist.log.include.headers');
+        return (bool) Config::get('mail-allowlist.sending.log.include.headers');
     }
 
     public function logMessageData(): bool
     {
-        return (bool) Config::get('mail-allowlist.log.include.message_data');
+        return (bool) Config::get('mail-allowlist.sending.log.include.message_data');
     }
 
     public function logBody(): bool
     {
-        return (bool) Config::get('mail-allowlist.log.include.body');
+        return (bool) Config::get('mail-allowlist.sending.log.include.body');
     }
 }

@@ -5,8 +5,8 @@ use Symfony\Component\Mime\Address;
 use TobMoeller\LaravelMailAllowlist\Actions\Addresses\IsAllowedRecipient;
 
 it('gets initialized with allowed domain and email lists', function () {
-    Config::set('mail-allowlist.allowed.domains', $allowedDomains = ['foo.de', 'bar.de']);
-    Config::set('mail-allowlist.allowed.emails', $allowedEmails = ['bar@foo.de', 'foo@bar.de']);
+    Config::set('mail-allowlist.sending.allowed.domains', $allowedDomains = ['foo.de', 'bar.de']);
+    Config::set('mail-allowlist.sending.allowed.emails', $allowedEmails = ['bar@foo.de', 'foo@bar.de']);
 
     $action = app(IsAllowedRecipient::class);
 
@@ -16,7 +16,7 @@ it('gets initialized with allowed domain and email lists', function () {
 });
 
 it('checks if the recipient has an allowed domain', function () {
-    Config::set('mail-allowlist.allowed.domains', ['bar.de']);
+    Config::set('mail-allowlist.sending.allowed.domains', ['bar.de']);
 
     $allowedAddress = new Address('foo@bar.de');
     $deniedAddress = new Address('bar@foo.de');
@@ -28,7 +28,7 @@ it('checks if the recipient has an allowed domain', function () {
 });
 
 it('checks if the recipient has an allowed email', function () {
-    Config::set('mail-allowlist.allowed.emails', ['foo@bar.de']);
+    Config::set('mail-allowlist.sending.allowed.emails', ['foo@bar.de']);
 
     $allowedAddress = new Address('foo@bar.de');
     $deniedAddress = new Address('bar@foo.de');

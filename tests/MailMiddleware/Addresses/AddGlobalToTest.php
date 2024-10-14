@@ -7,7 +7,7 @@ use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\AddGlobalTo;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\MessageContext;
 
 it('adds global to addresses and continues the pipeline', function () {
-    Config::set('mail-allowlist.global.to', ['foo@bar.com', 'bar@foo.com']);
+    Config::set('mail-allowlist.sending.global.to', ['foo@bar.com', 'bar@foo.com']);
     $mail = new Email;
     $context = new MessageContext($mail);
 
@@ -28,7 +28,7 @@ it('adds global to addresses and continues the pipeline', function () {
 });
 
 it('does not add an address if config is empty and continues the pipeline', function () {
-    Config::set('mail-allowlist.global.to', []);
+    Config::set('mail-allowlist.sending.global.to', []);
     $mail = new Email;
     $context = new MessageContext($mail);
 
