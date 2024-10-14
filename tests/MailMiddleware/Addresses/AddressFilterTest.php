@@ -10,8 +10,8 @@ use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\AddressFilter;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\MessageContext;
 
 it('filters a mail with address list headers', function (Header $header) {
-    Config::set('mail-allowlist.sending.allowed.domains', ['foo.de', 'bar.de']);
-    Config::set('mail-allowlist.sending.allowed.emails', ['bar@foo.com', 'foo@bar.com']);
+    Config::set('mail-allowlist.sending.middleware.allowed.domains', ['foo.de', 'bar.de']);
+    Config::set('mail-allowlist.sending.middleware.allowed.emails', ['bar@foo.com', 'foo@bar.com']);
 
     $allowed = [
         new Address('allowed@foo.de'),
@@ -45,8 +45,8 @@ it('filters a mail with address list headers', function (Header $header) {
 })->with(Header::addressListHeaders());
 
 it('filters a mail with address headers', function (Header $header) {
-    Config::set('mail-allowlist.sending.allowed.domains', ['foo.de']);
-    Config::set('mail-allowlist.sending.allowed.emails', ['bar@foo.com']);
+    Config::set('mail-allowlist.sending.middleware.allowed.domains', ['foo.de']);
+    Config::set('mail-allowlist.sending.middleware.allowed.emails', ['bar@foo.com']);
 
     $allowedDomainAddress = new Address('allowed@foo.de');
     $allowedEmailAddress = new Address('bar@foo.com');
@@ -87,8 +87,8 @@ it('filters a mail with address headers', function (Header $header) {
 })->with(Header::addressHeaders());
 
 it('removes address list headers with no allowed lists', function (Header $header) {
-    Config::set('mail-allowlist.sending.allowed.domains', []);
-    Config::set('mail-allowlist.sending.allowed.emails', []);
+    Config::set('mail-allowlist.sending.middleware.allowed.domains', []);
+    Config::set('mail-allowlist.sending.middleware.allowed.emails', []);
 
     $mail = new Email;
     $mail->getHeaders()->addMailboxListHeader($header->value, [new Address('foo@bar.com')]);
@@ -101,8 +101,8 @@ it('removes address list headers with no allowed lists', function (Header $heade
 })->with(Header::addressListHeaders());
 
 it('removes address headers with no allowed lists', function (Header $header) {
-    Config::set('mail-allowlist.sending.allowed.domains', []);
-    Config::set('mail-allowlist.sending.allowed.emails', []);
+    Config::set('mail-allowlist.sending.middleware.allowed.domains', []);
+    Config::set('mail-allowlist.sending.middleware.allowed.emails', []);
 
     $mail = new Email;
     $mail->getHeaders()->addMailboxHeader($header->value, new Address('foo@bar.com'));
