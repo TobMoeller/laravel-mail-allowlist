@@ -1,25 +1,12 @@
 <?php
 
-use Illuminate\Mail\SentMessage;
 use Illuminate\Support\Collection;
-use Symfony\Component\Mailer\Envelope;
-use Symfony\Component\Mailer\SentMessage as SymfonySentMessage;
-use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use TobMoeller\LaravelMailAllowlist\MailSentMiddleware\SentMessageContext;
 
 beforeEach(function () {
-    $sender = new Address('sender@test.de');
-    $to = new Address('to@test.de');
-
     $this->message = new Email;
-    $this->message->text('::text::');
-    $this->message->to($to);
-    $this->message->sender($sender);
-    $this->envelope = new Envelope($sender, [$to]);
-    $this->symfonySentMessage = new SymfonySentMessage($this->message, $this->envelope);
-    $this->symfonySentMessage->appendDebug('::debug::');
-    $this->sentMessage = new SentMessage($this->symfonySentMessage);
+    $this->sentMessage = generateSentMessage($this->message);
     $this->context = new SentMessageContext($this->sentMessage);
 });
 
