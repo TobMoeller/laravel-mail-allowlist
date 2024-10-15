@@ -1,11 +1,13 @@
 <?php
 
 use Illuminate\Mail\Events\MessageSending;
+use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Psr\Log\LogLevel;
 use TobMoeller\LaravelMailAllowlist\Facades\LaravelMailAllowlist;
 use TobMoeller\LaravelMailAllowlist\Listeners\MessageSendingListener;
+use TobMoeller\LaravelMailAllowlist\Listeners\MessageSentListener;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\AddGlobalBcc;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\AddGlobalCc;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\AddGlobalTo;
@@ -22,6 +24,7 @@ it('checks if the feature is enabled', function (bool $enabled) {
         ->toBe($enabled);
 
     Event::assertListening(MessageSending::class, MessageSendingListener::class);
+    Event::assertListening(MessageSent::class, MessageSentListener::class);
 })->with([true, false]);
 
 it('returns default mail middleware', function () {
