@@ -2,6 +2,18 @@
 
 All notable changes to `laravel-mail-allowlist` will be documented in this file.
 
+## 0.5 - 2024-10-16
+
+### Breaking Changes
+
+* Please refer to [UPGRADE.md](https://github.com/TobMoeller/laravel-mail-allowlist/blob/main/UPGRADE.md)
+
+### What's Changed
+
+* Sent mail middleware by @TobMoeller in https://github.com/TobMoeller/laravel-mail-allowlist/pull/8
+
+**Full Changelog**: https://github.com/TobMoeller/laravel-mail-allowlist/compare/0.4...0.5
+
 ## 0.4 - 2024-10-13
 
 ### What's Changed
