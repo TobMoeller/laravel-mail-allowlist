@@ -28,9 +28,9 @@ it('return null without running middleware if disabled', function () {
 
 it('runs the middleware pipelines and returns if the message should be sent', function (bool $shouldSendMessage, bool $shouldLog) {
     Config::set('mail-allowlist.enabled', true);
-    Config::set('mail-allowlist.log.enabled', $shouldLog);
-    Config::set('mail-allowlist.middleware_enabled', true);
-    Config::set('mail-allowlist.middleware', $middleware = ['::middleware::']);
+    Config::set('mail-allowlist.sending.log.enabled', $shouldLog);
+    Config::set('mail-allowlist.sending.middleware.enabled', true);
+    Config::set('mail-allowlist.sending.middleware.pipeline', $middleware = ['::middleware::']);
 
     $message = new Email;
 
@@ -74,8 +74,8 @@ it('runs the middleware pipelines and returns if the message should be sent', fu
 
 it('does not run the middleware if disabled', function () {
     Config::set('mail-allowlist.enabled', true);
-    Config::set('mail-allowlist.middleware_enabled', false);
-    Config::set('mail-allowlist.middleware', ['::middleware::']);
+    Config::set('mail-allowlist.sending.middleware.enabled', false);
+    Config::set('mail-allowlist.sending.middleware.pipeline', ['::middleware::']);
 
     $loggerMock = Mockery::mock(LogMessage::class);
     $loggerMock->shouldNotReceive('log');

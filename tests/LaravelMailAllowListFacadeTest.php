@@ -1,11 +1,13 @@
 <?php
 
 use Illuminate\Mail\Events\MessageSending;
+use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Psr\Log\LogLevel;
 use TobMoeller\LaravelMailAllowlist\Facades\LaravelMailAllowlist;
 use TobMoeller\LaravelMailAllowlist\Listeners\MessageSendingListener;
+use TobMoeller\LaravelMailAllowlist\Listeners\MessageSentListener;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\AddGlobalBcc;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\AddGlobalCc;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\AddGlobalTo;
@@ -22,6 +24,7 @@ it('checks if the feature is enabled', function (bool $enabled) {
         ->toBe($enabled);
 
     Event::assertListening(MessageSending::class, MessageSendingListener::class);
+    Event::assertListening(MessageSent::class, MessageSentListener::class);
 })->with([true, false]);
 
 it('returns default mail middleware', function () {
@@ -36,12 +39,19 @@ it('returns default mail middleware', function () {
             EnsureRecipients::class,
         ]);
 });
-it('returns mail middleware', function (mixed $value, mixed $expected) {
-    Config::set('mail-allowlist.middleware', $value);
 
-    expect(LaravelMailAllowlist::mailMiddleware())
+it('returns mail middleware', function (string $event, mixed $value, mixed $expected) {
+    Config::set('mail-allowlist.'.$event.'.middleware.pipeline', $value);
+
+    $middleware = $event === 'sending' ?
+        LaravelMailAllowlist::mailMiddleware() :
+        LaravelMailAllowlist::sentMailMiddleware();
+    expect($middleware)
         ->toBe($expected);
 })->with([
+    'sending',
+    'sent',
+], [
     [
         'value' => ['::class-string::', $class = new class {}],
         'expected' => ['::class-string::', $class],
@@ -61,7 +71,7 @@ it('returns mail middleware', function (mixed $value, mixed $expected) {
 ]);
 
 it('returns the allowed domain list', function (mixed $value, mixed $expected) {
-    Config::set('mail-allowlist.allowed.domains', $value);
+    Config::set('mail-allowlist.sending.middleware.allowed.domains', $value);
 
     expect(LaravelMailAllowlist::allowedDomainList())
         ->toBe($expected);
@@ -85,7 +95,7 @@ it('returns the allowed domain list', function (mixed $value, mixed $expected) {
 ]);
 
 it('returns the allowed email list', function (mixed $value, mixed $expected) {
-    Config::set('mail-allowlist.allowed.emails', $value);
+    Config::set('mail-allowlist.sending.middleware.allowed.emails', $value);
 
     expect(LaravelMailAllowlist::allowedEmailList())
         ->toBe($expected);
@@ -109,9 +119,9 @@ it('returns the allowed email list', function (mixed $value, mixed $expected) {
 ]);
 
 it('returns the global to/cc/bcc email lists', function (mixed $value, mixed $expected) {
-    Config::set('mail-allowlist.global.to', $value);
-    Config::set('mail-allowlist.global.cc', $value);
-    Config::set('mail-allowlist.global.bcc', $value);
+    Config::set('mail-allowlist.sending.middleware.global.to', $value);
+    Config::set('mail-allowlist.sending.middleware.global.cc', $value);
+    Config::set('mail-allowlist.sending.middleware.global.bcc', $value);
 
     expect(LaravelMailAllowlist::globalToEmailList())
         ->toBe($expected)
@@ -139,15 +149,23 @@ it('returns the global to/cc/bcc email lists', function (mixed $value, mixed $ex
 ]);
 
 it('returns if logging is enabled', function (bool $enabled) {
-    Config::set('mail-allowlist.log.enabled', $enabled);
+    Config::set('mail-allowlist.sending.log.enabled', $enabled);
 
     expect(LaravelMailAllowlist::logEnabled())
         ->toBe($enabled);
 })->with([true, false]);
 
+it('returns if sent logging is enabled', function (?bool $enabled) {
+    Config::set('mail-allowlist.sending.log.enabled', true);
+    Config::set('mail-allowlist.sent.log.enabled', $enabled);
+
+    expect(LaravelMailAllowlist::sentLogEnabled())
+        ->toBe($enabled === null ? true : $enabled);
+})->with([true, false, null]);
+
 it('returns the log channel', function (mixed $value, mixed $default, string $expected) {
     Config::set('logging.default', $default);
-    Config::set('mail-allowlist.log.channel', $value);
+    Config::set('mail-allowlist.sending.log.channel', $value);
 
     expect(LaravelMailAllowlist::logChannel())
         ->toBe($expected);
@@ -179,15 +197,57 @@ it('returns the log channel', function (mixed $value, mixed $default, string $ex
     ],
 ]);
 
+it('returns the sent log channel', function (mixed $value, mixed $default, string $expected) {
+    Config::set('mail-allowlist.sending.log.channel', $default);
+    Config::set('mail-allowlist.sent.log.channel', $value);
+
+    expect(LaravelMailAllowlist::sentLogChannel())
+        ->toBe($expected);
+})->with([
+    [
+        'value' => '::channel::',
+        'default' => null,
+        'expected' => '::channel::',
+    ],
+    [
+        'value' => null,
+        'default' => '::default::',
+        'expected' => '::default::',
+    ],
+    [
+        'value' => null,
+        'default' => null,
+        'expected' => 'stack',
+    ],
+    [
+        'value' => false,
+        'default' => '::default::',
+        'expected' => '::default::',
+    ],
+    [
+        'value' => false,
+        'default' => false,
+        'expected' => 'stack',
+    ],
+]);
+
 it('returns the log level', function (string $level) {
-    Config::set('mail-allowlist.log.level', $level);
+    Config::set('mail-allowlist.sending.log.level', $level);
 
     expect(LaravelMailAllowlist::logLevel())
         ->toBe($level);
 })->with(fn () => array_values((new ReflectionClass(LogLevel::class))->getConstants()));
 
+it('returns the sent log level', function (?string $level) {
+    Config::set('mail-allowlist.sending.log.level', LogLevel::INFO);
+    Config::set('mail-allowlist.sent.log.level', $level);
+
+    expect(LaravelMailAllowlist::sentLogLevel())
+        ->toBe($level === null ? LogLevel::INFO : $level);
+})->with(fn () => array_merge(array_values((new ReflectionClass(LogLevel::class))->getConstants()), [null]));
+
 it('throws on invalid log levels', function (mixed $level) {
-    Config::set('mail-allowlist.log.level', $level);
+    Config::set('mail-allowlist.sending.log.level', $level);
 
     expect(fn () => LaravelMailAllowlist::logLevel())
         ->toThrow(InvalidArgumentException::class, 'Invalid log level provided');
@@ -196,23 +256,51 @@ it('throws on invalid log levels', function (mixed $level) {
     null,
 ]);
 
+it('throws on invalid sent log levels', function () {
+    Config::set('mail-allowlist.sent.log.level', '::invalid_level::');
+
+    expect(fn () => LaravelMailAllowlist::sentLogLevel())
+        ->toThrow(InvalidArgumentException::class, 'Invalid log level provided');
+});
+
 it('returns if middleware should be logged', function (bool $enabled) {
-    Config::set('mail-allowlist.log.include.middleware', $enabled);
+    Config::set('mail-allowlist.sending.log.include.middleware', $enabled);
 
     expect(LaravelMailAllowlist::logMiddleware())
         ->toBe($enabled);
 })->with([true, false]);
 
 it('returns if headers should be logged', function (bool $enabled) {
-    Config::set('mail-allowlist.log.include.headers', $enabled);
+    Config::set('mail-allowlist.sending.log.include.headers', $enabled);
 
     expect(LaravelMailAllowlist::logHeaders())
         ->toBe($enabled);
 })->with([true, false]);
 
 it('returns if body should be logged', function (bool $enabled) {
-    Config::set('mail-allowlist.log.include.body', $enabled);
+    Config::set('mail-allowlist.sending.log.include.body', $enabled);
 
     expect(LaravelMailAllowlist::logBody())
+        ->toBe($enabled);
+})->with([true, false]);
+
+it('returns if sent middleware should be logged', function (bool $enabled) {
+    Config::set('mail-allowlist.sent.log.include.middleware', $enabled);
+
+    expect(LaravelMailAllowlist::sentLogMiddleware())
+        ->toBe($enabled);
+})->with([true, false]);
+
+it('returns if sent headers should be logged', function (bool $enabled) {
+    Config::set('mail-allowlist.sent.log.include.headers', $enabled);
+
+    expect(LaravelMailAllowlist::sentLogHeaders())
+        ->toBe($enabled);
+})->with([true, false]);
+
+it('returns if sent body should be logged', function (bool $enabled) {
+    Config::set('mail-allowlist.sent.log.include.body', $enabled);
+
+    expect(LaravelMailAllowlist::sentLogBody())
         ->toBe($enabled);
 })->with([true, false]);

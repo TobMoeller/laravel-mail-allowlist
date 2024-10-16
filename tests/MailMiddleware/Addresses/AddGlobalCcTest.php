@@ -7,7 +7,7 @@ use TobMoeller\LaravelMailAllowlist\MailMiddleware\Addresses\AddGlobalCc;
 use TobMoeller\LaravelMailAllowlist\MailMiddleware\MessageContext;
 
 it('adds global cc addresses and continues the pipeline', function () {
-    Config::set('mail-allowlist.global.cc', ['foo@bar.com', 'bar@foo.com']);
+    Config::set('mail-allowlist.sending.middleware.global.cc', ['foo@bar.com', 'bar@foo.com']);
     $mail = new Email;
     $context = new MessageContext($mail);
 
@@ -28,7 +28,7 @@ it('adds global cc addresses and continues the pipeline', function () {
 });
 
 it('does not add an address if config is empty and continues the pipeline', function () {
-    Config::set('mail-allowlist.global.cc', []);
+    Config::set('mail-allowlist.sending.middleware.global.cc', []);
     $mail = new Email;
     $context = new MessageContext($mail);
 
