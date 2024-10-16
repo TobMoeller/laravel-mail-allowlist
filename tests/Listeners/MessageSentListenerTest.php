@@ -4,7 +4,7 @@ use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\Mime\Email;
-use TobMoeller\LaravelMailAllowlist\Actions\Logs\LogMessage;
+use TobMoeller\LaravelMailAllowlist\Actions\Logs\SentLogMessage;
 use TobMoeller\LaravelMailAllowlist\Listeners\MessageSentListener;
 use TobMoeller\LaravelMailAllowlist\MailSentMiddleware\SentMessageContext;
 
@@ -16,7 +16,7 @@ beforeEach(function () {
 it('return null without running middleware if disabled', function () {
     Config::set('mail-allowlist.enabled', false);
 
-    $loggerMock = Mockery::mock(LogMessage::class);
+    $loggerMock = Mockery::mock(SentLogMessage::class);
     $loggerMock->shouldNotReceive('log');
 
     $event = new MessageSent($this->sentMessage);
@@ -38,7 +38,7 @@ it('runs the middleware pipelines and returns if the message should be sent', fu
     $message = $this->message;
     $sentMessage = $this->sentMessage;
 
-    $loggerMock = Mockery::mock(LogMessage::class);
+    $loggerMock = Mockery::mock(SentLogMessage::class);
     if ($shouldLog) {
         $loggerMock->shouldReceive('log')
             ->once()
@@ -71,14 +71,14 @@ it('runs the middleware pipelines and returns if the message should be sent', fu
     $this->instance('pipeline', $mock);
 
     $listener->handle($event);
-})->with([true, false])->skip('fix logging');
+})->with([true, false]);
 
 it('does not run the middleware if disabled', function () {
     Config::set('mail-allowlist.enabled', true);
     Config::set('mail-allowlist.sent.middleware.enabled', false);
     Config::set('mail-allowlist.sent.middleware.pipeline', ['::middleware::']);
 
-    $loggerMock = Mockery::mock(LogMessage::class);
+    $loggerMock = Mockery::mock(SentLogMessage::class);
     $loggerMock->shouldNotReceive('log');
 
     $event = new MessageSent($this->sentMessage);
