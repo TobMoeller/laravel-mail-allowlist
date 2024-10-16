@@ -4,7 +4,7 @@ namespace TobMoeller\LaravelMailAllowlist\MailSentMiddleware;
 
 use Closure;
 
-interface MailMiddlewareContract
+interface MailSentMiddlewareContract
 {
     public function handle(SentMessageContext $messageContext, Closure $next): mixed;
 }
