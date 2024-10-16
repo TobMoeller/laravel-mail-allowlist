@@ -30,6 +30,10 @@ class GenerateSentLogMessage implements GenerateSentLogMessageContract
             $logMessage .= $this->generateMessageDataMessage($messageContext);
         }
 
+        if (LaravelMailAllowlist::sentLogDebugInformation()) {
+            $logMessage .= $this->generateDebugMessage($messageContext);
+        }
+
         if ($isEmail && LaravelMailAllowlist::sentLogBody()) {
             $logMessage .= $this->generateBodyMessage($message);
         }
@@ -86,7 +90,7 @@ class GenerateSentLogMessage implements GenerateSentLogMessageContract
         return <<<LOG_MESSAGE_DATA
 
         ----------
-        MESSAGE DATA
+        DATA
         ----------
         {$data}
         LOG_MESSAGE_DATA;
@@ -108,9 +112,20 @@ class GenerateSentLogMessage implements GenerateSentLogMessageContract
         return <<<LOG_RAW_MESSAGE
 
         ----------
-        RAW MESSAGE
+        RAW
         ----------
         {$message->toString()}
         LOG_RAW_MESSAGE;
+    }
+
+    protected function generateDebugMessage(SentMessageContext $messageContext): string
+    {
+        return <<<LOG_DEBUG_INFORMATION
+
+        ----------
+        DEBUG
+        ----------
+        {$messageContext->getDebugInformation()}
+        LOG_DEBUG_INFORMATION;
     }
 }

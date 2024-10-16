@@ -118,7 +118,7 @@ it('generates a log message with message data', function () {
     LaravelMailAllowlist.MessageSending:
     ClassName: ::notification_name::
     ----------
-    MESSAGE DATA
+    DATA
     ----------
     LOG_MESSAGE;
     $expectation .= PHP_EOL.json_encode($this->messageData);
@@ -150,7 +150,7 @@ it('generates a log message with all options enabled', function () {
     ----------
     {$headers}
     ----------
-    MESSAGE DATA
+    DATA
     ----------
     {$data}
     ----------

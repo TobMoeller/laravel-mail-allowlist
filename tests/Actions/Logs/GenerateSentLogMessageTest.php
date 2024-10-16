@@ -28,24 +28,26 @@ it('is bound to interface', function () {
         ->toBeInstanceOf(GenerateSentLogMessage::class);
 });
 
-it('generates a log message', function (bool $hasClassName) {
+it('generates a log message', function () {
     Config::set('mail-allowlist.sent.log.include.middleware', false);
     Config::set('mail-allowlist.sent.log.include.headers', false);
     Config::set('mail-allowlist.sent.log.include.message_data', false);
     Config::set('mail-allowlist.sent.log.include.body', false);
+    Config::set('mail-allowlist.sent.log.include.debug', false);
 
     $expectation = 'LaravelMailAllowlist.MessageSent:';
     $expectation .= PHP_EOL.'ClassName: ::notification_name::';
 
     expect($this->logger->generate($this->context))
         ->toBe($expectation);
-})->with([true, false]);
+});
 
 it('generates a log message with middleware', function () {
     Config::set('mail-allowlist.sent.log.include.middleware', true);
     Config::set('mail-allowlist.sent.log.include.headers', false);
     Config::set('mail-allowlist.sent.log.include.message_data', false);
     Config::set('mail-allowlist.sent.log.include.body', false);
+    Config::set('mail-allowlist.sent.log.include.debug', false);
 
     $expectation = <<<'LOG_MESSAGE'
     LaravelMailAllowlist.MessageSent:
@@ -66,6 +68,7 @@ it('generates a log message with headers', function () {
     Config::set('mail-allowlist.sent.log.include.headers', true);
     Config::set('mail-allowlist.sent.log.include.message_data', false);
     Config::set('mail-allowlist.sent.log.include.body', false);
+    Config::set('mail-allowlist.sent.log.include.debug', false);
 
     $expectation = <<<'LOG_MESSAGE'
     LaravelMailAllowlist.MessageSent:
@@ -85,6 +88,7 @@ it('generates a log message with body', function () {
     Config::set('mail-allowlist.sent.log.include.headers', false);
     Config::set('mail-allowlist.sent.log.include.message_data', false);
     Config::set('mail-allowlist.sent.log.include.body', true);
+    Config::set('mail-allowlist.sent.log.include.debug', false);
 
     $expectation = <<<'LOG_MESSAGE'
     LaravelMailAllowlist.MessageSent:
@@ -104,12 +108,13 @@ it('generates a log message with message data', function () {
     Config::set('mail-allowlist.sent.log.include.headers', false);
     Config::set('mail-allowlist.sent.log.include.message_data', true);
     Config::set('mail-allowlist.sent.log.include.body', false);
+    Config::set('mail-allowlist.sent.log.include.debug', false);
 
     $expectation = <<<'LOG_MESSAGE'
     LaravelMailAllowlist.MessageSent:
     ClassName: ::notification_name::
     ----------
-    MESSAGE DATA
+    DATA
     ----------
     LOG_MESSAGE;
     $expectation .= PHP_EOL.json_encode($this->messageData);
@@ -123,6 +128,7 @@ it('generates a log message with all options enabled', function () {
     Config::set('mail-allowlist.sent.log.include.headers', true);
     Config::set('mail-allowlist.sent.log.include.message_data', true);
     Config::set('mail-allowlist.sent.log.include.body', true);
+    Config::set('mail-allowlist.sent.log.include.debug', true);
 
     $headers = $this->mail->getHeaders()->toString();
     $body = $this->mail->getBody()->toString();
@@ -141,9 +147,13 @@ it('generates a log message with all options enabled', function () {
     ----------
     {$headers}
     ----------
-    MESSAGE DATA
+    DATA
     ----------
     {$data}
+    ----------
+    DEBUG
+    ----------
+    ::debug::
     ----------
     BODY
     ----------
@@ -159,6 +169,7 @@ it('generates a log message for raw messages', function () {
     Config::set('mail-allowlist.sent.log.include.headers', true);
     Config::set('mail-allowlist.sent.log.include.message_data', false);
     Config::set('mail-allowlist.sent.log.include.body', true);
+    Config::set('mail-allowlist.sent.log.include.debug', false);
 
     $rawMessage = new RawMessage($this->mail->toString());
     $context = new SentMessageContext(generateSentMessage($rawMessage));
@@ -166,7 +177,7 @@ it('generates a log message for raw messages', function () {
     $expectation = <<<LOG_MESSAGE
     LaravelMailAllowlist.MessageSent:
     ----------
-    RAW MESSAGE
+    RAW
     ----------
     {$rawMessage->toString()}
     LOG_MESSAGE;
@@ -180,6 +191,7 @@ it('does not generate a log message for raw messages if only headers or body is 
     Config::set('mail-allowlist.sent.log.include.headers', ! $body);
     Config::set('mail-allowlist.sent.log.include.message_data', false);
     Config::set('mail-allowlist.sent.log.include.body', $body);
+    Config::set('mail-allowlist.sent.log.include.debug', false);
 
     $rawMessage = new RawMessage($this->mail->toString());
     $context = new SentMessageContext(generateSentMessage($rawMessage));
@@ -192,3 +204,23 @@ it('does not generate a log message for raw messages if only headers or body is 
     expect($this->logger->generate($context))
         ->toBe($expectation);
 })->with([true, false]);
+
+it('logs debug information', function () {
+    Config::set('mail-allowlist.sent.log.include.middleware', false);
+    Config::set('mail-allowlist.sent.log.include.headers', false);
+    Config::set('mail-allowlist.sent.log.include.message_data', false);
+    Config::set('mail-allowlist.sent.log.include.body', false);
+    Config::set('mail-allowlist.sent.log.include.debug', true);
+
+    $expectation = <<<'LOG_MESSAGE'
+    LaravelMailAllowlist.MessageSent:
+    ClassName: ::notification_name::
+    ----------
+    DEBUG
+    ----------
+    ::debug::
+    LOG_MESSAGE;
+
+    expect($this->logger->generate($this->context))
+        ->toBe($expectation);
+});

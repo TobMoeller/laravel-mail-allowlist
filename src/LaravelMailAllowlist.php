@@ -238,6 +238,11 @@ class LaravelMailAllowlist
         return (bool) (Config::get('mail-allowlist.sent.log.include.message_data') ?? $this->logMessageData());
     }
 
+    public function sentLogDebugInformation(): bool
+    {
+        return (bool) Config::get('mail-allowlist.sent.log.include.debug', false);
+    }
+
     public function sentLogBody(): bool
     {
         return (bool) (Config::get('mail-allowlist.sent.log.include.body') ?? $this->logBody());

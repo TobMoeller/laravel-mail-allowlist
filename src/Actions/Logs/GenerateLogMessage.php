@@ -72,7 +72,7 @@ class GenerateLogMessage implements GenerateLogMessageContract
         return <<<LOG_MESSAGE_DATA
 
         ----------
-        MESSAGE DATA
+        DATA
         ----------
         {$data}
         LOG_MESSAGE_DATA;

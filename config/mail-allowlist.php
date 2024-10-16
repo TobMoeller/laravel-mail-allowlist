@@ -191,7 +191,7 @@ return [
             'level' => env('MAIL_ALLOWLIST_SENT_LOG_LEVEL'),
 
             /*
-             * Define, what parts of the message should be logged.
+             * Define, what parts of the sent message should be logged.
              */
             'include' => [
                 /*
@@ -201,17 +201,22 @@ return [
                 'middleware' => false,
 
                 /*
-                 * Log the final message headers.
+                 * Log the sent message headers.
                  */
                 'headers' => true,
 
                 /*
-                 * Log the message data.
+                 * Log the sent message data.
                  */
                 'message_data' => false,
 
                 /*
-                 * Log the final message body.
+                 * Log the sent message debug information.
+                 */
+                'debug' => false,
+
+                /*
+                 * Log the sent message body.
                  */
                 'body' => false,
             ],
