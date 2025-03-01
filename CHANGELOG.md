@@ -2,6 +2,26 @@
 
 All notable changes to `laravel-mail-allowlist` will be documented in this file.
 
+## 0.6 - 2025-03-01
+
+### Package moved
+
+The package name has changed to `laravel-mail-middleware` and the repository was moved: [https://github.com/TobMoeller/laravel-mail-middleware](https://github.com/TobMoeller/laravel-mail-middleware)
+
+Please use the new repository!
+
+#### What's Changed
+
+* Bump dependabot/fetch-metadata from 2.2.0 to 2.3.0 by @dependabot in https://github.com/TobMoeller/laravel-mail-allowlist/pull/9
+* Bump aglipanci/laravel-pint-action from 2.4 to 2.5 by @dependabot in https://github.com/TobMoeller/laravel-mail-allowlist/pull/10
+* abandon package to move to new repository by @TobMoeller in https://github.com/TobMoeller/laravel-mail-allowlist/pull/11
+
+#### New Contributors
+
+* @dependabot made their first contribution in https://github.com/TobMoeller/laravel-mail-allowlist/pull/9
+
+**Full Changelog**: https://github.com/TobMoeller/laravel-mail-allowlist/compare/0.5...0.6
+
 ## 0.5 - 2024-10-16
 
 ### Breaking Changes
