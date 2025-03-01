@@ -1,6 +1,7 @@
 {
     "name": "tobmoeller/laravel-mail-allowlist",
     "description": "Prevent stray mails from your laravel application",
+    "abandoned": "tobmoeller/laravel-mail-middleware",
     "keywords": [
         "Tobias Möller",
         "laravel",

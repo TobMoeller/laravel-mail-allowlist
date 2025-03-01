@@ -5,6 +5,11 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/tobmoeller/laravel-mail-allowlist/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/tobmoeller/laravel-mail-allowlist/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/tobmoeller/laravel-mail-allowlist.svg?style=flat-square)](https://packagist.org/packages/tobmoeller/laravel-mail-allowlist)
 
+> [!CAUTION]
+> **Package moved**
+>
+> The package name has changed to `laravel-mail-middleware` and the repository was moved: [https://github.com/TobMoeller/laravel-mail-middleware](https://github.com/TobMoeller/laravel-mail-middleware)
+
 This package provides a customizable middleware pipeline for email messages, allowing you to filter, modify, and inspect emails before they are sent as well as inspecting just sent emails.
 
 **Key Features:**
